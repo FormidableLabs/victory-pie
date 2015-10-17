@@ -5,13 +5,12 @@ import React from "react-native";
 import ReactART from "ReactNativeART";
 import { VictoryAnimation } from "victory-animation/native";
 
-let {
+const {
   View
 } = React;
 
-let {
+const {
   Surface,
-  Path,
   Group,
   Shape,
   Text,
@@ -89,20 +88,24 @@ class VictoryPie extends React.Component {
 
     const sliceComponents = _.map(slices, (slice, index) => {
       const fill = this.colors(slice.x);
-      const styles = this.getStyles(fill);
+      const style = this.getStyles(fill);
 
       return (
         <VictoryAnimation data={sliceData[index]} key={index}>
           {(data) => {
-            let label = this.label.centroid(data);
+            const label = this.label.centroid(data);
             return (
               <Group>
                 <Shape
                   fill={fill}
-                  d={this.slice(data)}/>
+                  d={this.slice(data)}
+                  style={style.path}/>
                 <Text
                   fill={this.props.fontColor}
-                  font={this.props.fontWeight + " " + this.props.fontSize + "px " + this.props.fontFamily}
+                  font={
+                    this.props.fontWeight + " " + this.props.fontSize + "px " +
+                    this.props.fontFamily
+                  }
                   textAnchor="middle"
                   transform={new Transform().translate(label[0], label[1])}>
                   {slice.x}
@@ -119,11 +122,15 @@ class VictoryPie extends React.Component {
 
   render() {
     return (
-      <View style={{flex: 1, backgroundColor: 'white', alignItems: 'center', justifyContent: 'center'}}>
+      <View style={{
+        flex: 1, backgroundColor: "white", alignItems: "center", justifyContent: "center"
+      }}>
         <Surface
           height={this.props.height}
           width={this.props.width}>
-          <Group transform={new Transform().translate(this.props.width / 2,this.props.height / 2)}>
+          <Group transform={
+            new Transform().translate(this.props.width / 2, this.props.height / 2)
+          }>
             {this.drawArcs(this.props.data)}
           </Group>
         </Surface>
