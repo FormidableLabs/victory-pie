@@ -29,7 +29,7 @@ window.mocha.setup({
 // --------------------------------------------------------------------------
 // Use webpack to include all app code _except_ the entry point so we can get
 // code coverage in the bundle, whether tested or not.
-const srcReq = require.context("src", true, /\.jsx?$/);
+const srcReq = require.context("src/components", true, /\.jsx?$/);
 srcReq.keys().map(srcReq);
 
 // Use webpack to infer and `require` tests automatically.
