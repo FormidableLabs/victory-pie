@@ -102,6 +102,7 @@
     "react-docgen": "^2.4.0",
     "react-dom": "0.14.x",
     "react-hot-loader": "^1.2.8",
+    "react-native": "^0.12.x",
     "sinon": "^1.15.4",
     "sinon-chai": "^2.8.0",
     "static-site-generator-webpack-plugin": "^1.2.0",
