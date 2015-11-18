@@ -5,6 +5,16 @@ import React from "react";
 import Radium from "radium";
 import Util from "../util";
 import {VictoryAnimation} from "victory-animation";
+import ReactART from "react-art";
+
+let {
+  Surface,
+  Path,
+  Group,
+  Shape,
+  Text,
+  Transform
+} = ReactART;
 
 const defaultStyles = {
   data: {
@@ -19,6 +29,7 @@ const defaultStyles = {
     stroke: "transparent",
     fontFamily: "'Helvetica Neue', Helvetica, Arial, sans-serif",
     fontSize: 10,
+    fontWidth: "normal",
     textAnchor: "middle"
   }
 };
@@ -233,22 +244,24 @@ export default class VictoryPie extends React.Component {
       const fill = this.colors(slice.x);
       const style = _.merge({}, this.style.data, {fill});
       const data = sliceData[index];
+      const label = this.labelPosition.centroid(data);
       return (
-        <g key={index}>
-          <path
-            d={this.slice(data)}
-            style={style}/>
-          <text
-            dy=".35em"
-            style={this.style.labels}
-            transform={"translate(" + this.labelPosition.centroid(data) + ")"}>
+        <Group key={index}>
+          <Shape
+            fill={fill}
+            d={this.slice(data)}/>
+          <Text
+            fill={this.style.labels.fill}
+            font={this.style.labels.fontWeight + " " + this.style.labels.fontSize + "px " + this.style.labels.fontFamily}
+            textAnchor="middle"
+            transform={new Transform().translate(label[0], label[1])}>
             {slice.x}
-          </text>
-        </g>
+          </Text>
+        </Group>
       );
     });
 
-    return (<g>{sliceComponents}</g>);
+    return (<Group>{sliceComponents}</Group>);
   }
 
   render() {
@@ -269,14 +282,13 @@ export default class VictoryPie extends React.Component {
     const xOffset = this.radius + this.padding.left;
     const yOffset = this.radius + this.padding.top;
     const group = (
-      <g style={style}
-        transform={"translate(" +
-          xOffset + "," +
-          yOffset + ")"}>
+      <Group style={style}
+        transform={
+          new Transform().translate(this.props.width / 2,this.props.height / 2)}>
         {this.drawArcs(this.props.data)}
-      </g>
+      </Group>
     );
 
-    return this.props.standalone ? <svg style={style}>{group}</svg> : group;
+    return this.props.standalone ? <Surface width={style.width} height={style.height} style={style}>{group}</Surface> : group;
   }
 }
