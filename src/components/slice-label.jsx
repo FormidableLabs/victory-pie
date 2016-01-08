@@ -34,7 +34,7 @@ export default class SliceLabel extends Component {
   renderLabelComponent(props) {
     const component = props.labelComponent;
     const style = this.evaluateStyle({
-      { padding: 0 },
+      padding: 0,
       ...props.style,
       ...component.props.style
     });
@@ -51,7 +51,7 @@ export default class SliceLabel extends Component {
   }
 
   renderVictoryLabel(props) {
-    const style = this.evaluateStyle({ { padding: 0 }, ...props.style });
+    const style = this.evaluateStyle({ padding: 0, ...props.style });
     return (
       <VictoryLabel
         x={this.x}
