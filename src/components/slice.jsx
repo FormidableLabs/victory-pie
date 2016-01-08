@@ -1,9 +1,9 @@
 import _ from "lodash";
-import React, { PropTypes } from "react";
+import React, { Component, PropTypes } from "react";
 import Radium from "radium";
 
 @Radium
-export default class Slice extends React.Component {
+export default class Slice extends Component {
   static propTypes = {
     slice: PropTypes.object,
     pathFunction: PropTypes.func,
@@ -18,7 +18,7 @@ export default class Slice extends React.Component {
 
   getStyles() {
     const dataStyles = _.omit(this.props.slice.data, ["x", "y", "label"]);
-    return this.evaluateStyle(_.merge({}, this.props.style, dataStyles));
+    return this.evaluateStyle({ ...this.props.style, ...dataStyles });
   }
 
   renderSlice(props) {
