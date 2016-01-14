@@ -1,8 +1,8 @@
 /*global document:false window:false*/
-import React from "react";
+import React, { Component, PropTypes } from "react";
 import ReactDOM from "react-dom";
 import Radium from "radium";
-import {VictoryPie} from "../src/index";
+import { VictoryPie } from "../src/index";
 
 const rand = function () {
   return Math.max(Math.floor(Math.random() * 10000), 1000);
@@ -21,12 +21,12 @@ const getData = function () {
 };
 
 @Radium
-class App extends React.Component {
+class App extends Component {
 
   constructor(props) {
     super(props);
     this.state = {
-      data: this.props.data,
+      data: props.data,
       colorScale: [
         "#D85F49",
         "#F66D3B",
@@ -62,39 +62,41 @@ class App extends React.Component {
   }
 
   render() {
+    const { style, data, colorScale } = this.state;
+
     return (
       <div>
-        <VictoryPie style={this.state.style}/>
+        <VictoryPie style={style}/>
 
         <VictoryPie
           style={{
-            parent: {border: "1px solid #ccc", margin: 20},
-            labels: {fontSize: 20, padding: 100, fill: "white"}
+            parent: { border: "1px solid #ccc", margin: 20 },
+            labels: { fontSize: 20, padding: 100, fill: "white" }
           }}
           colorScale="greyscale"
         />
 
-        <VictoryPie style={this.state.style} innerRadius={140}/>
+        <VictoryPie style={style} innerRadius={140}/>
 
         <VictoryPie
           style={{
-            parent: {border: "1px solid #ccc", margin: 20},
-            data: {stroke: "transparent", opacity: 0.4}
+            parent: { border: "1px solid #ccc", margin: 20 },
+            data: { stroke: "transparent", opacity: 0.4 }
           }}
         />
 
-        <VictoryPie style={this.state.style} endAngle={90} startAngle={-90}/>
+        <VictoryPie style={style} endAngle={90} startAngle={-90}/>
 
         <VictoryPie
-          style={this.state.style}
-          data={this.state.data}
+          style={style}
+          data={data}
           innerRadius={100}
-          animate={{velocity: 0.03}}
-          colorScale={this.state.colorScale}
+          animate={{ velocity: 0.03 }}
+          colorScale={colorScale}
         />
 
         <VictoryPie
-          style={this.state.style}
+          style={style}
           endAngle={90}
           innerRadius={140}
           padAngle={5}
@@ -106,7 +108,7 @@ class App extends React.Component {
 }
 
 App.propTypes = {
-  data: React.PropTypes.array
+  data: PropTypes.array
 };
 
 const content = document.getElementById("content");

@@ -1,11 +1,11 @@
 import _ from "lodash";
-import React, { PropTypes } from "react";
+import React, { Component, PropTypes } from "react";
 import Radium from "radium";
-import {VictoryLabel} from "victory-label";
+import { VictoryLabel } from "victory-label";
 
 
 @Radium
-export default class SliceLabel extends React.Component {
+export default class SliceLabel extends Component {
   static propTypes = {
     labelComponent: PropTypes.any,
     positionFunction: PropTypes.func,
@@ -33,7 +33,11 @@ export default class SliceLabel extends React.Component {
 
   renderLabelComponent(props) {
     const component = props.labelComponent;
-    const style = this.evaluateStyle(_.merge({padding: 0}, props.style, component.props.style));
+    const style = this.evaluateStyle({
+      padding: 0,
+      ...props.style,
+      ...component.props.style
+    });
     const children = component.props.children || this.label;
     const newProps = {
       x: component.props.x || this.x,
@@ -47,7 +51,7 @@ export default class SliceLabel extends React.Component {
   }
 
   renderVictoryLabel(props) {
-    const style = this.evaluateStyle(_.merge({padding: 0}, props.style));
+    const style = this.evaluateStyle({ padding: 0, ...props.style });
     return (
       <VictoryLabel
         x={this.x}

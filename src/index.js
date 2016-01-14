@@ -1,3 +1,1 @@
-module.exports = {
-  VictoryPie: require("./components/victory-pie")
-};
+export VictoryPie from "./components/victory-pie";

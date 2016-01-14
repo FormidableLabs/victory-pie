@@ -1,11 +1,11 @@
 import _ from "lodash";
-import React, { PropTypes } from "react";
+import React, { Component, PropTypes } from "react";
 import Radium from "radium";
 import d3Shape from "d3-shape";
-import Util from "victory-util";
+import Util, { PropTypes as UtilPropTypes, Style } from "victory-util";
 import Slice from "./slice";
 import SliceLabel from "./slice-label";
-import {VictoryAnimation} from "victory-animation";
+import { VictoryAnimation } from "victory-animation";
 
 const defaultStyles = {
   data: {
@@ -24,8 +24,26 @@ const defaultStyles = {
   }
 };
 
+const defaultData = [
+  { x: "A", y: 1 },
+  { x: "B", y: 2 },
+  { x: "C", y: 3 },
+  { x: "D", y: 1 },
+  { x: "E", y: 2 }
+];
+
+const defaultColorScale = [
+  "#75C776",
+  "#39B6C5",
+  "#78CCC4",
+  "#62C3A4",
+  "#64A8D1",
+  "#8C95C8",
+  "#3BAF74"
+];
+
 @Radium
-export default class VictoryPie extends React.Component {
+export default class VictoryPie extends Component {
   static propTypes = {
     /**
      * The animate prop specifies props for victory-animation to use. If this prop is
@@ -65,13 +83,13 @@ export default class VictoryPie extends React.Component {
     /**
      * The height props specifies the height of the chart container element in pixels
      */
-    height: Util.PropTypes.nonNegative,
+    height: UtilPropTypes.nonNegative,
     /**
      * When creating a donut chart, this prop determines the number of pixels between
      * the center of the chart and the inner edge of a donut. When this prop is set to zero
      * a regular pie chart is rendered.
      */
-    innerRadius: Util.PropTypes.nonNegative,
+    innerRadius: UtilPropTypes.nonNegative,
     /**
      * This prop specifies the labels that will be applied to your data. This prop can be
      * passed in as an array of values, in the same order as your data, or as a function
@@ -83,7 +101,7 @@ export default class VictoryPie extends React.Component {
      * The padAngle prop determines the amount of separation between adjacent data slices
      * in number of degrees
      */
-    padAngle: Util.PropTypes.nonNegative,
+    padAngle: UtilPropTypes.nonNegative,
     /**
      * The padding props specifies the amount of padding in number of pixels between
      * the edge of the chart and any rendered child components. This prop can be given
@@ -123,31 +141,17 @@ export default class VictoryPie extends React.Component {
     /**
      * The width props specifies the width of the chart container element in pixels
      */
-    width: Util.PropTypes.nonNegative
+    width: UtilPropTypes.nonNegative
   }
 
   static defaultProps = {
-    data: [
-      { x: "A", y: 1 },
-      { x: "B", y: 2 },
-      { x: "C", y: 3 },
-      { x: "D", y: 1 },
-      { x: "E", y: 2 }
-    ],
+    data: defaultData,
     endAngle: 360,
     height: 400,
     innerRadius: 0,
     padAngle: 0,
     padding: 30,
-    colorScale: [
-      "#75C776",
-      "#39B6C5",
-      "#78CCC4",
-      "#62C3A4",
-      "#64A8D1",
-      "#8C95C8",
-      "#3BAF74"
-    ],
+    colorScale: defaultColorScale,
     startAngle: 0,
     standalone: true,
     width: 400
@@ -161,8 +165,8 @@ export default class VictoryPie extends React.Component {
     this.style = this.getStyles(props);
     this.padding = this.getPadding(props);
     this.radius = this.getRadius(props);
-    this.colorScale = _.isArray(props.colorScale) ?
-      props.colorScale : Util.Style.getColorScale(props.colorScale);
+    this.colorScale = Array.isArray(props.colorScale) ?
+      props.colorScale : Style.getColorScale(props.colorScale);
     this.slice = d3Shape.arc()
       .outerRadius(this.radius)
       .innerRadius(this.props.innerRadius);
@@ -177,16 +181,16 @@ export default class VictoryPie extends React.Component {
 
   getStyles(props) {
     const style = props.style || defaultStyles;
-    const {data, labels, parent} = style;
+    const { data, labels, parent } = style;
     return {
-      parent: _.merge({height: props.height, width: props.width}, parent),
-      data: _.merge({}, defaultStyles.data, data),
-      labels: _.merge({}, defaultStyles.labels, labels)
+      parent: { height: props.height, width: props.width, ...parent },
+      data: { ...defaultStyles.data, ...data },
+      labels: { ...defaultStyles.labels, ...labels }
     };
   }
 
   getPadding(props) {
-    const padding = _.isNumber(props.padding) ? props.padding : 0;
+    const padding = Number.isFinite(props.padding) ? props.padding : 0;
     const paddingObj = _.isObject(props.padding) ? props.padding : {};
     return {
       top: paddingObj.top || padding,
@@ -197,10 +201,10 @@ export default class VictoryPie extends React.Component {
   }
 
   getRadius(props) {
-    return _.min([
+    return Math.min(
       props.width - this.padding.left - this.padding.right,
       props.height - this.padding.top - this.padding.bottom
-    ]) / 2;
+    ) / 2;
   }
 
   getLabelPosition(props) {
@@ -215,9 +219,9 @@ export default class VictoryPie extends React.Component {
 
   renderData() {
     const slices = this.pie(this.props.data);
-    const sliceComponents = _.map(slices, (slice, index) => {
+    const sliceComponents = slices.map((slice, index) => {
       const fill = this.colorScale[index % this.colorScale.length];
-      const style = _.merge({}, this.style.data, {fill});
+      const style = { ...this.style.data, ...{ fill } };
       return (
         <g key={index}>
           <Slice
