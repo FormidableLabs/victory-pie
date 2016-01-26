@@ -1,6 +1,9 @@
-import _ from "lodash";
+import omit from "lodash/object/omit";
+import merge from "lodash/object/merge";
 import React, { Component, PropTypes } from "react";
 import Radium from "radium";
+import { Chart } from "victory-util";
+
 
 @Radium
 export default class Slice extends Component {
@@ -10,22 +13,13 @@ export default class Slice extends Component {
     style: PropTypes.object
   };
 
-  evaluateStyle(style) {
-    return _.transform(style, (result, value, key) => {
-      result[key] = _.isFunction(value) ? value.call(this, this.props.slice.data) : value;
-    });
-  }
-
-  getStyles() {
-    const dataStyles = _.omit(this.props.slice.data, ["x", "y", "label"]);
-    return this.evaluateStyle({ ...this.props.style, ...dataStyles });
-  }
-
   renderSlice(props) {
+    const dataStyles = omit(props.slice.data, ["x", "y", "label"]);
+    const style = merge({}, props.style, dataStyles);
     return (
       <path
-        d={props.pathFunction.call(this, props.slice)}
-        style={this.getStyles()}
+        d={props.pathFunction(props.slice)}
+        style={Chart.evaluateStyle(style)}
       />
     );
   }

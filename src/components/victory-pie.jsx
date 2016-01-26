@@ -2,7 +2,7 @@ import _ from "lodash";
 import React, { Component, PropTypes } from "react";
 import Radium from "radium";
 import d3Shape from "d3-shape";
-import Util, { PropTypes as UtilPropTypes, Style } from "victory-util";
+import { PropTypes as CustomPropTypes, Style, Chart } from "victory-util";
 import Slice from "./slice";
 import SliceLabel from "./slice-label";
 import { VictoryAnimation } from "victory-animation";
@@ -83,13 +83,13 @@ export default class VictoryPie extends Component {
     /**
      * The height props specifies the height of the chart container element in pixels
      */
-    height: UtilPropTypes.nonNegative,
+    height: CustomPropTypes.nonNegative,
     /**
      * When creating a donut chart, this prop determines the number of pixels between
      * the center of the chart and the inner edge of a donut. When this prop is set to zero
      * a regular pie chart is rendered.
      */
-    innerRadius: UtilPropTypes.nonNegative,
+    innerRadius: CustomPropTypes.nonNegative,
     /**
      * This prop specifies the labels that will be applied to your data. This prop can be
      * passed in as an array of values, in the same order as your data, or as a function
@@ -101,7 +101,7 @@ export default class VictoryPie extends Component {
      * The padAngle prop determines the amount of separation between adjacent data slices
      * in number of degrees
      */
-    padAngle: UtilPropTypes.nonNegative,
+    padAngle: CustomPropTypes.nonNegative,
     /**
      * The padding props specifies the amount of padding in number of pixels between
      * the edge of the chart and any rendered child components. This prop can be given
@@ -141,7 +141,7 @@ export default class VictoryPie extends Component {
     /**
      * The width props specifies the width of the chart container element in pixels
      */
-    width: UtilPropTypes.nonNegative
+    width: CustomPropTypes.nonNegative
   }
 
   static defaultProps = {
@@ -162,42 +162,9 @@ export default class VictoryPie extends Component {
   }
 
   getCalculatedValues(props) {
-    this.style = this.getStyles(props);
-    this.padding = this.getPadding(props);
+    this.style = Chart.getStyles(props, defaultStyles);
+    this.padding = Chart.getPadding(props);
     this.radius = this.getRadius(props);
-    this.colorScale = Array.isArray(props.colorScale) ?
-      props.colorScale : Style.getColorScale(props.colorScale);
-    this.slice = d3Shape.arc()
-      .outerRadius(this.radius)
-      .innerRadius(this.props.innerRadius);
-    this.labelPosition = this.getLabelPosition(props);
-    this.pie = d3Shape.pie()
-      .sort(null)
-      .startAngle(this.degreesToRadians(props.startAngle))
-      .endAngle(this.degreesToRadians(props.endAngle))
-      .padAngle(this.degreesToRadians(props.padAngle))
-      .value((data) => { return data.y; });
-  }
-
-  getStyles(props) {
-    const style = props.style || defaultStyles;
-    const { data, labels, parent } = style;
-    return {
-      parent: { height: props.height, width: props.width, ...parent },
-      data: { ...defaultStyles.data, ...data },
-      labels: { ...defaultStyles.labels, ...labels }
-    };
-  }
-
-  getPadding(props) {
-    const padding = Number.isFinite(props.padding) ? props.padding : 0;
-    const paddingObj = _.isObject(props.padding) ? props.padding : {};
-    return {
-      top: paddingObj.top || padding,
-      bottom: paddingObj.bottom || padding,
-      left: paddingObj.left || padding,
-      right: paddingObj.right || padding
-    };
   }
 
   getRadius(props) {
@@ -217,24 +184,48 @@ export default class VictoryPie extends Component {
       .innerRadius(innerRadius);
   }
 
-  renderData() {
-    const slices = this.pie(this.props.data);
+  renderSlice(slice, index, props) {
+    const sliceFunction = d3Shape.arc()
+      .outerRadius(this.radius)
+      .innerRadius(props.innerRadius);
+    const colorScale = Array.isArray(props.colorScale) ?
+        props.colorScale : Style.getColorScale(props.colorScale);
+    const fill = colorScale[index % colorScale.length];
+    const style = { ...this.style.data, ...{ fill } };
+    return (
+      <Slice
+        slice={slice}
+        pathFunction={sliceFunction}
+        style={style}
+      />
+    );
+  }
+
+  renderSliceLabel(slice, props) {
+    const labelPosition = this.getLabelPosition(props)
+    return (
+      <SliceLabel
+        labelComponent={props.labelComponent}
+        style={this.style.labels}
+        positionFunction={labelPosition.centroid}
+        slice={slice}
+      />
+    );
+  }
+
+  renderData(props) {
+    const pie = d3Shape.pie()
+      .sort(null)
+      .startAngle(this.degreesToRadians(props.startAngle))
+      .endAngle(this.degreesToRadians(props.endAngle))
+      .padAngle(this.degreesToRadians(props.padAngle))
+      .value((data) => { return data.y; });
+    const slices = pie(props.data);
     const sliceComponents = slices.map((slice, index) => {
-      const fill = this.colorScale[index % this.colorScale.length];
-      const style = { ...this.style.data, ...{ fill } };
       return (
         <g key={index}>
-          <Slice
-            slice={slice}
-            pathFunction={this.slice}
-            style={style}
-          />
-          <SliceLabel
-            labelComponent={this.props.labelComponent}
-            style={this.style.labels}
-            positionFunction={this.labelPosition.centroid}
-            slice={slice}
-          />
+          {this.renderSlice(slice, index, props)}
+          {this.renderSliceLabel(slice, props)}
         </g>
       );
     });
@@ -259,15 +250,16 @@ export default class VictoryPie extends Component {
     } else {
       this.getCalculatedValues(this.props);
     }
-    const style = this.style.parent;
+    const style = Chart.getStyles(this.props, defaultStyles);
+
     const xOffset = this.radius + this.padding.left;
     const yOffset = this.radius + this.padding.top;
     const group = (
-      <g style={style} transform={`translate(${xOffset}, ${yOffset})`}>
-        {this.renderData()}
+      <g style={style.parent} transform={`translate(${xOffset}, ${yOffset})`}>
+        {this.renderData(this.props)}
       </g>
     );
 
-    return this.props.standalone ? <svg style={style}>{group}</svg> : group;
+    return this.props.standalone ? <svg style={style.parent}>{group}</svg> : group;
   }
 }
