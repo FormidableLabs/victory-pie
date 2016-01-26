@@ -161,71 +161,76 @@ export default class VictoryPie extends Component {
     return degrees * (Math.PI / 180);
   }
 
-  getCalculatedValues(props) {
-    this.style = Chart.getStyles(props, defaultStyles);
-    this.padding = Chart.getPadding(props);
-    this.radius = this.getRadius(props);
-  }
-
-  getRadius(props) {
+  getRadius(props, padding) {
     return Math.min(
-      props.width - this.padding.left - this.padding.right,
-      props.height - this.padding.top - this.padding.bottom
+      props.width - padding.left - padding.right,
+      props.height - padding.top - padding.bottom
     ) / 2;
   }
 
-  getLabelPosition(props) {
+  getLabelPosition(props, calculatedProps) {
+    const { style, radius } = calculatedProps;
     // TODO: better label positioning
     const innerRadius = props.innerRadius ?
-      props.innerRadius + this.style.labels.padding :
-      this.style.labels.padding;
+      props.innerRadius + style.labels.padding :
+      style.labels.padding;
     return d3Shape.arc()
-      .outerRadius(this.radius)
+      .outerRadius(radius)
       .innerRadius(innerRadius);
   }
 
-  renderSlice(slice, index, props) {
-    const sliceFunction = d3Shape.arc()
-      .outerRadius(this.radius)
-      .innerRadius(props.innerRadius);
-    const colorScale = Array.isArray(props.colorScale) ?
-        props.colorScale : Style.getColorScale(props.colorScale);
-    const fill = colorScale[index % colorScale.length];
-    const style = { ...this.style.data, ...{ fill } };
+  renderSlice(slice, sliceFunction, sliceStyle) {
     return (
       <Slice
         slice={slice}
         pathFunction={sliceFunction}
-        style={style}
+        style={sliceStyle}
       />
     );
   }
 
-  renderSliceLabel(slice, props) {
-    const labelPosition = this.getLabelPosition(props)
+  renderSliceLabel(slice, props, calculatedProps) {
+    const { style } = calculatedProps;
+    const labelPosition = this.getLabelPosition(props, calculatedProps);
     return (
       <SliceLabel
         labelComponent={props.labelComponent}
-        style={this.style.labels}
+        style={style.labels}
         positionFunction={labelPosition.centroid}
         slice={slice}
       />
     );
   }
 
-  renderData(props) {
-    const pie = d3Shape.pie()
+  getPieLayout(props) {
+    return d3Shape.pie()
       .sort(null)
       .startAngle(this.degreesToRadians(props.startAngle))
       .endAngle(this.degreesToRadians(props.endAngle))
       .padAngle(this.degreesToRadians(props.padAngle))
       .value((data) => { return data.y; });
+  }
+
+  getSliceFunction(props, radius) {
+    return d3Shape.arc()
+      .outerRadius(radius)
+      .innerRadius(props.innerRadius);
+  }
+
+  renderData(props, calculatedProps) {
+    const {style, radius} = calculatedProps;
+    const pie = this.getPieLayout(props);
     const slices = pie(props.data);
+    const sliceFunction = this.getSliceFunction(props, radius);
+    const colorScale = Array.isArray(props.colorScale) ?
+        props.colorScale : Style.getColorScale(props.colorScale);
     const sliceComponents = slices.map((slice, index) => {
+      const fill = colorScale[index % colorScale.length];
+      const sliceStyle = { ...style.data, ...{ fill } };
       return (
         <g key={index}>
-          {this.renderSlice(slice, index, props)}
-          {this.renderSliceLabel(slice, props)}
+          {this.renderSlice(slice, sliceFunction, sliceStyle)}
+          {this.renderSliceLabel(slice, props, calculatedProps)}
         </g>
       );
     });
@@ -247,16 +252,16 @@ export default class VictoryPie extends Component {
           {(props) => <VictoryPie {...this.props} {...props} animate={null}/>}
         </VictoryAnimation>
       );
-    } else {
-      this.getCalculatedValues(this.props);
     }
     const style = Chart.getStyles(this.props, defaultStyles);
-
-    const xOffset = this.radius + this.padding.left;
-    const yOffset = this.radius + this.padding.top;
+    const padding = Chart.getPadding(this.props);
+    const radius = this.getRadius(this.props, padding);
+    const calculatedProps = {style, radius};
+    const xOffset = radius + padding.left;
+    const yOffset = radius + padding.top;
     const group = (
       <g style={style.parent} transform={`translate(${xOffset}, ${yOffset})`}>
-        {this.renderData(this.props)}
+        {this.renderData(this.props, calculatedProps)}
       </g>
     );
 
