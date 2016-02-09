@@ -7,6 +7,8 @@ import _ from "lodash";
 import React from "react";
 import ReactDOM from "react-dom";
 import VictoryPie from "src/components/victory-pie";
+import Slice from "src/components/slice";
+
 // Use `TestUtils` to inject into DOM, simulate events, etc.
 // See: https://facebook.github.io/react/docs/test-utils.html
 import TestUtils from "react-addons-test-utils";
@@ -23,6 +25,34 @@ describe("components/victory-pie", () => {
   describe("default component rendering", () => {
     before(() => {
       renderedComponent = TestUtils.renderIntoDocument(<VictoryPie/>);
+    });
+
+    it("renders an svg with the correct width and height", () => {
+      const svg = getElement(renderedComponent, "svg");
+      // default width and height
+      expect(svg.style.width).to.equal(`${VictoryPie.defaultProps.width}px`);
+      expect(svg.style.height).to.equal(`${VictoryPie.defaultProps.height}px`);
+    });
+  });
+
+  describe("rendering with an injected Stateless Function Component", () => {
+    before(() => {
+      const MySlice = (props) => <Slice {...props} />;
+      renderedComponent = TestUtils.renderIntoDocument(<VictoryPie Slice={MySlice} />);
+    });
+
+    it("renders an svg with the correct width and height", () => {
+      const svg = getElement(renderedComponent, "svg");
+      // default width and height
+      expect(svg.style.width).to.equal(`${VictoryPie.defaultProps.width}px`);
+      expect(svg.style.height).to.equal(`${VictoryPie.defaultProps.height}px`);
+    });
+  });
+
+  describe("rendering with a injected factories", () => {
+    before(() => {
+      const myFactory = React.createFactory(Slice);
+      renderedComponent = TestUtils.renderIntoDocument(<VictoryPie Slice={myFactory} />);
     });
 
     it("renders an svg with the correct width and height", () => {
