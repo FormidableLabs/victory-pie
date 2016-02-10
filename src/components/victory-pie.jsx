@@ -187,7 +187,23 @@ export default class VictoryPie extends React.Component {
       CustomPropTypes.allOfType([CustomPropTypes.integer, CustomPropTypes.nonNegative]),
       PropTypes.string,
       PropTypes.arrayOf(PropTypes.string)
-    ])
+    ]),
+    /**
+     * The SliceComponent prop specifies a React component to use in building each slice in
+     * your pie chart.
+     * The value will be used in JSX.
+     * But, by default, Victory's standard Slice component will be used.
+     * @examples 'Slice', 'props => <Slice {...props} />'
+     */
+    SliceComponent: PropTypes.func,
+    /**
+     * The SliceLabelComponent prop specifies a React component to use in building each label in
+     * your pie chart.
+     * The value will be used in JSX.
+     * But, by default, Victory's standard SliceLabel component will be used.
+     * @examples 'SliceLabel', 'props => <SliceLabel {...props} />
+     */
+    SliceLabelComponent: PropTypes.func
   };
 
   static defaultProps = {
@@ -216,7 +232,9 @@ export default class VictoryPie extends React.Component {
     standalone: true,
     width: 400,
     x: "x",
-    y: "y"
+    y: "y",
+    SliceComponent: Slice,
+    SliceLabelComponent: SliceLabel
   };
 
   static getDomain = Domain.getDomain.bind(Domain);
@@ -227,12 +245,12 @@ export default class VictoryPie extends React.Component {
     const sliceStyle = merge({}, style.data, {fill});
     return (
       <g key={index}>
-        <Slice
+        <this.props.SliceComponent
           slice={slice}
           pathFunction={makeSlicePath}
           style={sliceStyle}
         />
-        <SliceLabel
+        <this.props.SliceLabelComponent
           labelComponent={this.props.labelComponent}
           style={style.labels}
           positionFunction={labelPosition.centroid}

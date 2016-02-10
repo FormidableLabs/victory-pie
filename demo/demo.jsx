@@ -1,8 +1,10 @@
 /*global window:false*/
 import _ from "lodash";
-import React from "react";
+import React, {PropTypes} from "react";
 import Radium from "radium";
 import {VictoryPie} from "../src/index";
+
+import Slice from "../src/components/slice";
 
 const rand = () => Math.max(Math.floor(Math.random() * 10000), 1000);
 
@@ -17,6 +19,24 @@ const getData = () => {
     { x: "≥65", y: rand() }
   ];
 };
+
+
+class MySlice extends React.Component {
+  static propTypes = {
+    slice: PropTypes.object
+  };
+
+  handleClick() {
+  }
+
+  render() {
+    return (
+      <g onClick={this.handleClick.bind(this)}>
+        <Slice {...this.props} />
+      </g>
+    );
+  }
+}
 
 @Radium
 export default class App extends React.Component {
@@ -109,6 +129,15 @@ export default class App extends React.Component {
 
         <VictoryPie
           data={_.range(0, 6).map((i) => [i, Math.random()])}
+          x={0}
+          y={1}
+          style={this.state.style}
+          colorScale="qualitative"
+        />
+
+        <VictoryPie
+          animate={{velocity: 0.03}}
+          SliceComponent={MySlice}
           x={0}
           y={1}
           style={this.state.style}
