@@ -347,15 +347,38 @@ export default class VictoryPie extends React.Component {
         const pieLabel = React.cloneElement(labelComponent, Object.assign({
           events: Events.getPartialEvents(labelEvents, key, labelProps)
         }, labelProps));
-        return (
-          <g key={`pie-group-${key}`}>
-            {pieComponent}
-            {pieLabel}
-          </g>
-        );
+        return this.renderSlice(key, pieComponent, pieLabel);
       }
       return pieComponent;
     });
+  }
+
+  renderSlice(key, pieComponent, pieLabel) {
+    return (
+      <g key={`pie-group-${key}`}>
+        {pieComponent}
+        {pieLabel}
+      </g>
+    );
+  }
+
+  renderGroup({style, xOffset, yOffset, calculatedProps}) {
+    return (
+      <g style={style} transform={`translate(${xOffset}, ${yOffset})`}>
+        {this.renderData(this.props, calculatedProps)}
+      </g>
+    );
+  }
+
+  renderStandalone(style, group) {
+    return (
+      <svg
+        style={style}
+        viewBox={`0 0 ${this.props.width} ${this.props.height}`}
+      >
+        {group}
+      </svg>
+    );
   }
 
   render() {
@@ -369,7 +392,7 @@ export default class VictoryPie extends React.Component {
       ];
       return (
         <VictoryTransition animate={this.props.animate} animationWhitelist={whitelist}>
-          <VictoryPie {...this.props}/>
+          {React.createElement(this.constructor, this.props)}
         </VictoryTransition>
       );
     }
@@ -378,19 +401,8 @@ export default class VictoryPie extends React.Component {
     const { style, padding, radius } = calculatedProps;
     const xOffset = radius + padding.left;
     const yOffset = radius + padding.top;
-    const group = (
-      <g style={style.parent} transform={`translate(${xOffset}, ${yOffset})`}>
-        {this.renderData(this.props, calculatedProps)}
-      </g>
-    );
+    const group = this.renderGroup({style: style.parent, xOffset, yOffset, calculatedProps});
 
-    return this.props.standalone ?
-      <svg
-        style={style.parent}
-        viewBox={`0 0 ${this.props.width} ${this.props.height}`}
-      >
-        {group}
-      </svg> :
-      group;
+    return this.props.standalone ? this.renderStandalone(style.parent, group) : group;
   }
 }

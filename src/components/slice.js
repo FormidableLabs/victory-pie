@@ -11,7 +11,6 @@ export default class Slice extends React.Component {
   };
 
   renderSlice(props) {
-
     return (
       <path
         d={props.pathFunction(props.slice)}
