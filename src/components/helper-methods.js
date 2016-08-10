@@ -70,7 +70,7 @@ export default {
     : fallbackProps.style;
     const style = Helpers.getStyles(props.style, styleObject, "auto", "100%");
     const getColorScale = () => {
-      return theme ? theme.props.colorScale : fallbackProps.colorScale;
+      return theme ? props.theme.pie.props.colorScale : fallbackProps.colorScale;
     };
     const colorScale = props.colorScale || getColorScale();
     const colors = Array.isArray(colorScale) ?
