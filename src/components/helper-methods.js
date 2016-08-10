@@ -65,12 +65,11 @@ export default {
   },
 
   getCalculatedValues(props, fallbackProps) {
-    const theme = props.theme && props.theme.pie;
-    const styleObject = theme ? props.theme.pie.style
+    const styleObject = props.theme && props.theme.pie ? props.theme.pie
     : fallbackProps.style;
     const style = Helpers.getStyles(props.style, styleObject, "auto", "100%");
     const getColorScale = () => {
-      return theme ? theme.props.colorScale : fallbackProps.colorScale;
+      return props.theme ? props.theme.props.colorScale : fallbackProps.colorScale;
     };
     const colorScale = props.colorScale || getColorScale();
     const colors = Array.isArray(colorScale) ?
