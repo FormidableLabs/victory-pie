@@ -7,6 +7,11 @@ import _ from "lodash";
 import { VictoryPie } from "../src";
 
 storiesOf("VictoryPie", module)
+  .addDecorator((story) => (
+    <div style={{ maxWidth: "40%", margin: "0 auto" }}>
+      {story()}
+    </div>
+  ))
   .add("by default", () => (
     <VictoryPie />
   ))
@@ -36,8 +41,7 @@ storiesOf("VictoryPie", module)
     <VictoryPie
       style={{
         labels: {
-          fontSize: 20,
-          padding: 100
+          fontSize: 20
         },
         data: {
           stroke: "transparent",
@@ -81,7 +85,8 @@ storiesOf("VictoryPie", module)
         { x: "45-64", y: 4263 },
         { x: "≥65", y: 7502 }
       ]}
-      innerRadius={110}
+      innerRadius={100}
+      labelRadius={110}
       colorScale={[
         "#D85F49",
         "#F66D3B",
@@ -97,7 +102,8 @@ storiesOf("VictoryPie", module)
     <VictoryPie
       style={{
         data: {
-          stroke: (data) => data.y > 75 ? "black" : "transparent",
+          stroke: (data) => data.y > 75 ? "red" : "transparent",
+          strokeWidth: 3,
           opacity: (data) => data.y > 75 ? 1 : 0.4
         }
       }}
@@ -161,12 +167,14 @@ storiesOf("VictoryPie", module)
         return (
           <VictoryPie
             data={this.state.data}
+            labelRadius={120}
+            colorScale="qualitative"
             animate={{
               duration: 1000,
               onEnter: {
                 duration: 500,
-                before: () => ({ y: 0, label: " " }),
-                after: (datum) => ({ y: datum.y, label: "NEW" })
+                before: () => ({ y: 0, label: "NEW" }),
+                after: (datum) => ({ y: datum.y, label: datum.label })
               }
             }}
           />
