@@ -16,6 +16,12 @@ class PizzaSlice extends React.Component {
 
 describe("components/victory-pie", () => {
   describe("default component rendering", () => {
+    it("matches a saved snapshot", () => {
+      const wrapper = mount(
+        <VictoryPie/>
+      );
+      expect(wrapper).to.matchSnapshot("wrapper");
+    });
     it("renders an svg with the correct width and height", () => {
       const wrapper = mount(
         <VictoryPie/>

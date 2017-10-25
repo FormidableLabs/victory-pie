@@ -9,8 +9,9 @@
 const chai = require("chai");
 const sinonChai = require("sinon-chai");
 const chaiEnzyme = require("chai-enzyme");
+const _ = require("lodash");
 
-// --------------------------------------------------------------------------
+//---------------------------------------------------------
 // Chai / Sinon / Mocha configuration.
 // --------------------------------------------------------------------------
 // Exports
@@ -19,6 +20,7 @@ window.expect = chai.expect;
 // Plugins
 chai.use(sinonChai);
 chai.use(chaiEnzyme());
+chai.use(_);
 
 // Mocha (part of static include).
 window.mocha.setup({

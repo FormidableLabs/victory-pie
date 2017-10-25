@@ -1,5 +1,5 @@
 import React from "react";
-import { storiesOf, action } from "@kadira/storybook";
+import { storiesOf, action } from "@storybook/react";
 import _ from "lodash";
 import { VictoryPie } from "../src";
 
@@ -10,20 +10,20 @@ storiesOf("VictoryPie", module)
   .add("with basic data", () => (
     <VictoryPie
       data={[
-        {x: "Cat", y: 62},
-        {x: "Dog", y: 91},
-        {x: "Fish", y: 55},
-        {x: "Bird", y: 55}
+        { x: "Cat", y: 62 },
+        { x: "Dog", y: 91 },
+        { x: "Fish", y: 55 },
+        { x: "Bird", y: 55 }
       ]}
     />
   ))
   .add("with flexible data", () => (
     <VictoryPie
       data={[
-        {animal: "Cat", pet: 45, wild: 17},
-        {animal: "Dog", pet: 85, wild: 6},
-        {animal: "Fish", pet: 55, wild: 0},
-        {animal: "Bird", pet: 15, wild: 40}
+        { animal: "Cat", pet: 45, wild: 17 },
+        { animal: "Dog", pet: 85, wild: 6 },
+        { animal: "Fish", pet: 55, wild: 0 },
+        { animal: "Bird", pet: 15, wild: 40 }
       ]}
       x={"animal"}
       y={(data) => data.pet + data.wild}
@@ -70,13 +70,13 @@ storiesOf("VictoryPie", module)
         }
       }}
       data={[
-        {x: "<5", y: 6279},
-        {x: "5-13", y: 9182},
-        {x: "14-17", y: 5511},
-        {x: "18-24", y: 7164},
-        {x: "25-44", y: 6716},
-        {x: "45-64", y: 4263},
-        {x: "≥65", y: 7502}
+        { x: "<5", y: 6279 },
+        { x: "5-13", y: 9182 },
+        { x: "14-17", y: 5511 },
+        { x: "18-24", y: 7164 },
+        { x: "25-44", y: 6716 },
+        { x: "45-64", y: 4263 },
+        { x: "≥65", y: 7502 }
       ]}
       innerRadius={110}
       colorScale={[
@@ -99,27 +99,27 @@ storiesOf("VictoryPie", module)
         }
       }}
       data={[
-        {x: "Cat", y: 62},
-        {x: "Dog", y: 91},
-        {x: "Fish", y: 55},
-        {x: "Bird", y: 55},
+        { x: "Cat", y: 62 },
+        { x: "Dog", y: 91 },
+        { x: "Fish", y: 55 },
+        { x: "Bird", y: 55 }
       ]}
     />
   ))
   .add("with a click handler", () => (
     <VictoryPie
       data={[
-        {x: "Cat", y: 62},
-        {x: "Dog", y: 91},
-        {x: "Fish", y: 55},
-        {x: "Bird", y: 55},
+        { x: "Cat", y: 62 },
+        { x: "Dog", y: 91 },
+        { x: "Fish", y: 55 },
+        { x: "Bird", y: 55 }
       ]}
       events={{
         data: {
           onClick: (event, props) => {
             action("click a slice of pie")();
             const fill = props.style.fill;
-            return fill === "pink" ? null : {style: {fill: "pink"}};
+            return fill === "pink" ? null : { style: { fill: "pink" } };
           }
         }
       }}
@@ -129,7 +129,7 @@ storiesOf("VictoryPie", module)
     class PieContainer extends React.Component {
       constructor(props) {
         super(props);
-        this.state = {data: this.getData()};
+        this.state = { data: this.getData() };
       }
 
       getData() {
@@ -166,5 +166,5 @@ storiesOf("VictoryPie", module)
       }
     }
 
-    return <PieContainer />
+    return <PieContainer/>;
   });
