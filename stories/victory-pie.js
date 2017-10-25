@@ -1,5 +1,8 @@
+/*global window:false*/
+/*eslint-disable no-magic-numbers*/
 import React from "react";
-import { storiesOf, action } from "@storybook/react";
+import { storiesOf } from "@storybook/react";
+import { action } from "@storybook/addon-actions";
 import _ from "lodash";
 import { VictoryPie } from "../src";
 
@@ -114,15 +117,20 @@ storiesOf("VictoryPie", module)
         { x: "Fish", y: 55 },
         { x: "Bird", y: 55 }
       ]}
-      events={{
-        data: {
+      events={[{
+        target: "data",
+        eventHandlers: {
           onClick: (event, props) => {
             action("click a slice of pie")();
             const fill = props.style.fill;
-            return fill === "pink" ? null : { style: { fill: "pink" } };
+            return {
+              mutation: () => {
+                return fill === "red" ? null : { style: { fill: "red" } };
+              }
+            };
           }
         }
-      }}
+      }]}
     />
   ))
   .add("with an animation", () => {
@@ -132,8 +140,8 @@ storiesOf("VictoryPie", module)
         this.state = { data: this.getData() };
       }
 
-      getData() {
-        const samples =  _.random(6, 10);
+      getData() { //eslint-disable-line
+        const samples = _.random(6, 10);
         return _.range(samples).map((data) => {
           return {
             x: data,
@@ -144,8 +152,8 @@ storiesOf("VictoryPie", module)
       }
 
       componentDidMount() {
-        setInterval(() => {
-          this.setState({data: this.getData()});
+        window.setInterval(() => {
+          this.setState({ data: this.getData() });
         }, 2000);
       }
 
@@ -157,8 +165,8 @@ storiesOf("VictoryPie", module)
               duration: 1000,
               onEnter: {
                 duration: 500,
-                before: () => ({y: 0, label: " "}),
-                after: (datum) => ({y: datum.y, label: "NEW"})
+                before: () => ({ y: 0, label: " " }),
+                after: (datum) => ({ y: datum.y, label: "NEW" })
               }
             }}
           />
