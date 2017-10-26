@@ -115,7 +115,7 @@ storiesOf("VictoryPie", module)
       ]}
     />
   ))
-  .add("with a click handler", () => (
+  .add("events: click handler", () => (
     <VictoryPie
       data={[
         { x: "Cat", y: 62 },
@@ -139,7 +139,7 @@ storiesOf("VictoryPie", module)
       }]}
     />
   ))
-  .add("with an animation", () => {
+  .add("animation: custom entrance transitions", () => {
     class PieContainer extends React.Component {
       constructor(props) {
         super(props);

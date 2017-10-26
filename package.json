@@ -51,6 +51,7 @@
     "chai": "^3.5.0",
     "chai-enzyme": "0.4.1",
     "enzyme": "^2.4.1",
+    "loki": "^0.7.0",
     "mocha": "^3.0.2",
     "prop-types": "^15.5.8",
     "react": "^15.5.4",
@@ -68,6 +69,19 @@
     },
     "scripts": {
       "postinstall": ""
+    }
+  },
+  "loki": {
+    "configurations": {
+      "chrome.laptop": {
+        "target": "chrome.app",
+        "width": 1366,
+        "height": 768,
+        "deviceScaleFactor": 1,
+        "mobile": false,
+        "fitWindow": false,
+        "skipStories": "(events|animation)"
+      }
     }
   }
 }
