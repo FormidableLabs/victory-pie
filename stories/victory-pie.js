@@ -8,7 +8,7 @@ import { VictoryPie } from "../src";
 
 storiesOf("VictoryPie", module)
   .addDecorator((story) => (
-    <div style={{ maxWidth: "40%", margin: "0 auto" }}>
+    <div style={{ width: 400, height: 400 }}>
       {story()}
     </div>
   ))
