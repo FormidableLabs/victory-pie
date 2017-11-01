@@ -26,9 +26,7 @@ before_install:
 script:
   - npm --version
   - node_modules/.bin/builder run check-ci
-  - 'if [ "${TRAVIS_NODE_VERSION}" = "8" ]; then
-      npm run loki-ci
-    fi'
+  - 'if [ "${TRAVIS_NODE_VERSION}" = "8" ]; then npm run loki-ci; fi'
 
   # Prune deps to just production and ensure we can still build
   - npm prune --production
