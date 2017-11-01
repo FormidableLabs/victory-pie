@@ -28,7 +28,7 @@
     "version": "builder run npm:version",
     "storybook": "start-storybook -p 6006",
     "build-storybook": "build-storybook",
-    "loki-ci": "build-storybook && loki --requireReference --reactUri file:./storybook-static",
+    "loki-ci": "build-storybook && loki --requireReference --reactUri file://${PWD}/storybook-static/",
     "lank-watch": "lank exec -t web -u -- builder run build-watch --expand-archetype",
     "lank-run": "lank exec -m victory-pie -uq -- builder run dev --expand-archetype",
     "lank-test": "lank exec -m victory-pie -uq -- builder run check --expand-archetype",
