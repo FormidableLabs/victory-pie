@@ -32,7 +32,7 @@
     "lank-watch": "lank exec -t web -u -- builder run build-watch --expand-archetype",
     "lank-run": "lank exec -m victory-pie -uq -- builder run dev --expand-archetype",
     "lank-test": "lank exec -m victory-pie -uq -- builder run check --expand-archetype",
-    "loki-test": "loki test --chromeTolerance 25"
+    "loki-test": "loki test --chromeTolerance 27"
   },
   "dependencies": {
     "builder": "^3.2.1",
