@@ -3,6 +3,7 @@ language: node_js
 node_js:
   - "4"
   - "6"
+  - "8"
 
 # Use container-based Travis infrastructure.
 sudo: false
@@ -16,6 +17,8 @@ before_install:
   - export DISPLAY=:99.0
   - sh -e /etc/init.d/xvfb start
 
+  - git lfs pull
+
   # Install npmv3 because of postinstall bugs in npmv2:
   # See https://github.com/FormidableLabs/victory/issues/98
   - npm install -g npm@3
@@ -23,6 +26,7 @@ before_install:
 script:
   - npm --version
   - node_modules/.bin/builder run check-ci
+  - 'if [ "${TRAVIS_NODE_VERSION}" = "8" ]; then npm run loki-ci; fi'
 
   # Prune deps to just production and ensure we can still build
   - npm prune --production
